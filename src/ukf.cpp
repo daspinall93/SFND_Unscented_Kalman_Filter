@@ -90,16 +90,12 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package)
     {
       auto rho = meas_package.raw_measurements_[0];
       auto phi = meas_package.raw_measurements_[1];
-      auto rho_dot = meas_package.raw_measurements_[2];
+      auto rhoRate = meas_package.raw_measurements_[2];
 
       auto posX = rho * sin(phi);
       auto posY = rho * cos(phi);
 
-      x_ << posX,
-            posY,
-            rho_dot,
-            phi,
-            0;
+      x_ << posX, posY, rhoRate, phi, 0;
       P_.setIdentity();
     }
     else if(meas_package.sensor_type_ == MeasurementPackage::LASER)
@@ -107,11 +103,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package)
       auto x = meas_package.raw_measurements_[0];
       auto y = meas_package.raw_measurements_[1];
 
-      x_ << x,
-            y,
-            0,
-            0,
-            0;
+      x_ << x, y, 0, 0, 0;
 
       P_.setIdentity();
     }
@@ -129,6 +121,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package)
   time_us_ = meas_package.timestamp_;  
   Prediction(dt);
 
+  // Carry out measurment update
   if(meas_package.sensor_type_ == MeasurementPackage::RADAR)
     UpdateRadar(meas_package);
   else if (meas_package.sensor_type_ == MeasurementPackage::LASER)
