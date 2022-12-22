@@ -95,6 +95,11 @@ class UKF {
 
   // Sigma point spreading parameter
   double lambda_;
+
+private:
+
+  Eigen::MatrixXd GenAugSigmaPoints();
+
 };
 
 #endif  // UKF_H
